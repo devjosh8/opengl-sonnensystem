@@ -5,12 +5,13 @@
 class ShaderProgram {
 
    public:
-      ShaderProgram(std::string vertexShaderFile, std::string fragmentShaderFile);
-      int init();
+      int init(std::string vertexShaderArg, std::string fragmentShaderArg);
       void use();
       virtual ~ShaderProgram();
 
    private:
       std::string vertexShaderFile;
       std::string fragmentShaderFile;
+      unsigned int fragmentShader, vertexShader;
+      unsigned int shaderProgram;
 };

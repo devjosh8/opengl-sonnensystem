@@ -1,5 +1,6 @@
 #pragma once
 
+#include "shader.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -17,4 +18,6 @@ class Renderer {
 
    private:
       GLFWwindow* window;
+      ShaderProgram shader_program;
+      unsigned int vao,vbo;
 };

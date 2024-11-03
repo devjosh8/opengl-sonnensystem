@@ -42,8 +42,16 @@ target_link_libraries(sonnensystem
         ${OPENGL_LIBRARIES}
 )
 
-# Füge die Definitionen für die externen Bibliotheken hinzu (optional, falls benötigt)
-target_compile_definitions(sonnensystem PRIVATE
-    GLAD_GLAPI_EXPORT
+
+# Pfad zum Resourcen-Ordner
+set(RESOURCE_DIR "${CMAKE_SOURCE_DIR}/res")
+set(TARGET_DIR "${CMAKE_SOURCE_DIR}/build/res")
+
+# Befehl zum Kopieren des Ordners
+add_custom_command(
+    TARGET sonnensystem POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${RESOURCE_DIR} ${TARGET_DIR}
 )
+
 

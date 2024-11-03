@@ -3,7 +3,9 @@
 #include "glad/glad.h"
 
 #include <GLFW/glfw3.h>
+#include <cstdio>
 #include <iostream>
+#include "quad.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -18,37 +20,50 @@ int Renderer::init() {
    return 1;
 }
 
-unsigned int vbo, vao;
-float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
-};  
+
+Quad quad;
+
 void Renderer::post_init() {
    glViewport(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 
+   shader_program.init("res/vertexshader.txt", "res/fragmentshader.txt");
+
+   quad.init();
+
+   float vertices[] = {
+       -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f
+   };  
+   
    glGenVertexArrays(1, &vao);
+
    glGenBuffers(1, &vbo);
-
    glBindVertexArray(vao);
-   glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
+   glBindBuffer(GL_ARRAY_BUFFER, vbo);
    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
    glEnableVertexAttribArray(0);
+
+   glBindBuffer(GL_ARRAY_BUFFER, 0); 
+   glBindVertexArray(0);
+
 }
 
 void Renderer::render() {
+   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+   glClear(GL_COLOR_BUFFER_BIT);
+   
+
+   shader_program.use();
+   quad.render();
+
    glfwSwapBuffers(window);
-
-   glBindVertexArray(vao);
-
-
-   glBindVertexArray(0);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
