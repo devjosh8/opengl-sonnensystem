@@ -7,6 +7,7 @@ class ShaderProgram {
    public:
       int init(std::string vertexShaderArg, std::string fragmentShaderArg);
       void use();
+      unsigned int getLocation(const char* string);
       virtual ~ShaderProgram();
 
    private:

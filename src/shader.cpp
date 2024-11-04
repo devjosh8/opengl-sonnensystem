@@ -73,6 +73,10 @@ void ShaderProgram::use() {
    glUseProgram(shaderProgram);
 }
 
+unsigned int ShaderProgram::getLocation(const char* string) {
+   return glGetUniformLocation(shaderProgram, string);
+}
+
 ShaderProgram::~ShaderProgram() {
    glDeleteProgram(shaderProgram);
 }

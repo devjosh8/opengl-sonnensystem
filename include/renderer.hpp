@@ -19,5 +19,4 @@ class Renderer {
    private:
       GLFWwindow* window;
       ShaderProgram shader_program;
-      unsigned int vao,vbo;
 };
