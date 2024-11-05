@@ -16,8 +16,12 @@ class Renderer {
       void set_mouse_callback(GLFWcursorposfun func);
 
       void closeWindow();
+      virtual ~Renderer();
 
    private:
       GLFWwindow* window;
-      ShaderProgram shader_program;
+      ShaderProgram defaultShader;
+      ShaderProgram outlineShader;
+
+      void update_matrices(glm::mat4 view, ShaderProgram shader_to_update);
 };

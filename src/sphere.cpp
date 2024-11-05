@@ -1,5 +1,6 @@
 #include "sphere.hpp"
 #include "glad/glad.h"
+#include "glm/ext/vector_float3.hpp"
 #include <cmath>
 #include <math.h>
 
@@ -37,9 +38,11 @@ void Sphere::init(float radius) {
            nx = x * lengthInv;
            ny = y * lengthInv;
            nz = z * lengthInv;
-           normals.push_back(nx);
-           normals.push_back(ny);
-           normals.push_back(nz);
+
+
+           vertices.push_back(nx);
+           vertices.push_back(ny);
+           vertices.push_back(nz);
        }
    }
 
@@ -83,8 +86,11 @@ void Sphere::init(float radius) {
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * indices.size(), &indices[0], GL_STATIC_DRAW);
 
-   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
    glEnableVertexAttribArray(0);
+
+   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+   glEnableVertexAttribArray(1);
 
    glBindBuffer(GL_ARRAY_BUFFER, 0);
    glBindVertexArray(0);
