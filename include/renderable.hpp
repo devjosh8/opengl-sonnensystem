@@ -2,10 +2,6 @@
 
 class Renderable {
    
-   public:
-      virtual void init() = 0;
-      virtual void render() = 0;
-
-   
+   public:   
       unsigned int vao, vbo, ebo;
 };

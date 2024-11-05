@@ -4,8 +4,8 @@
 
 class Quad : Renderable {
    public:
-      void init() override;
-      void render() override;
+      void init();
+      void render();
 
    private: 
       static float vertices[12];

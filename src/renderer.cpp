@@ -1,17 +1,16 @@
 #include "renderer.hpp"
 #include "cube.hpp"
+#include "glm/ext/vector_float3.hpp"
+#include "planet.hpp"
 #include "defines.hpp"
 #include "glad/glad.h"
+#include "glm/ext/matrix_transform.hpp"
+#include "glm/ext/quaternion_transform.hpp"
+#include "sphere.hpp"
 
 #include <GLFW/glfw3.h>
 #include <cstdio>
 #include <iostream>
-#include "glm/ext/matrix_clip_space.hpp"
-#include "glm/ext/matrix_float4x4.hpp"
-#include "glm/ext/matrix_transform.hpp"
-#include "glm/ext/vector_float3.hpp"
-#include "glm/trigonometric.hpp"
-#include "quad.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -30,46 +29,45 @@ int Renderer::init() {
    }
    
    glfwMakeContextCurrent(window);
+
+   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
    return 1;
 }
 
-
-Cube cube;
+Planet sun;
+Planet earth;
 
 void Renderer::post_init() {
    glViewport(0, 0, GAME_WIDTH, GAME_HEIGHT);
    glEnable(GL_DEPTH_TEST);
-
    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-
    shader_program.init("res/vertexshader.txt", "res/fragmentshader.txt");
-
-   cube.init();
+   
+   sun.init(glm::vec3(1.0f, 1.0f, 0.0f), 2.0f, 0.0f, 0.0f, 50.0f);
+   earth.init(glm::vec3(0.0f, 1.0f, 0.0f), 0.5f, 50.0f, 10.0f, 120.0f);
 }
 
-void Renderer::render() {
+void Renderer::render(glm::mat4 view) {
    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
    shader_program.use();
 
    glm::mat4 model      = glm::mat4(1.0f);
-   glm::mat4 view       = glm::mat4(1.0f);
    glm::mat4 projection = glm::mat4(1.0f);
 
-   model = glm::rotate(model, glm::radians(50.0f) * (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
-   view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-   projection = glm::perspective(glm::radians(45.0f), (float)game_width / (float)game_height, 0.1f, 100.0f);
+   projection = glm::perspective(glm::radians(CAM_FOV), (float)game_width / (float)game_height, 0.1f, 100.0f);
    
-   unsigned int modelLoc = shader_program.getLocation("model");
-   glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
    unsigned int viewLoc = shader_program.getLocation("view");
    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
    unsigned int projectionLoc = shader_program.getLocation("projection");
    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-   cube.render();
+   
+   
+   sun.render(&shader_program);
+   earth.render(&shader_program);
 
    glfwSwapBuffers(window);
 }
@@ -91,5 +89,9 @@ bool Renderer::windowShouldClose() {
 
 bool Renderer::key_pressed(int key) {
    return glfwGetKey(window, key);
+}
+
+void Renderer::set_mouse_callback(GLFWcursorposfun func) {
+   glfwSetCursorPosCallback(window, func);
 }
 
