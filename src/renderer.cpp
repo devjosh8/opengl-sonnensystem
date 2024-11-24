@@ -62,7 +62,7 @@ void Renderer::post_init() {
    float sun_distance = 0.0f;
 
    // Planet; Color,                         Radius,        Rotation-Speed,   Bahn-Radius, Eigen-Rotation 
-   sun.    init(glm::vec3(1.0f, 1.0f, 0.0f),    2.5f,   0.000f * rot_speed_scale,  0.0f + sun_distance,      4.0f);
+   sun.    init(glm::vec3(1.0f, 1.0f, 0.0f),    2.5f,    0.000f * rot_speed_scale, 0.0f + sun_distance,      4.0f);
    mercury.init(glm::vec3(0.64f, 0.66f, 0.64f), 0.19f,   4.140f * rot_speed_scale, 5.8f + sun_distance,      120.0f);
    venus.  init(glm::vec3(1.0f, 1.0f, 0.94f),   0.475f,  1.620f * rot_speed_scale, 10.8f + sun_distance,     120.0f);
    earth.  init(glm::vec3(0.09f, 0.57f, 0.61f), 0.5f,    1.000f * rot_speed_scale, 15.0f + sun_distance,     100.0f);
@@ -99,7 +99,9 @@ void Renderer::render(glm::mat4 view) {
 
    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
    glStencilMask(0x00);
-   glDisable(GL_DEPTH_TEST);
+   // glDisable(GL_DEPTH_TEST);
+   
+   glClear(GL_DEPTH_BUFFER_BIT);
 
    outlineShader.use(); 
    update_matrices(view, &outlineShader); 
@@ -116,7 +118,7 @@ void Renderer::render(glm::mat4 view) {
 
    glStencilMask(0xFF);
    glStencilFunc(GL_ALWAYS, 0, 0xFF);
-   glEnable(GL_DEPTH_TEST);
+   // glEnable(GL_DEPTH_TEST);
 
 
    glfwSwapBuffers(window);
