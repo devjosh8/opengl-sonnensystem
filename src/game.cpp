@@ -71,28 +71,47 @@ void Game::run() {
    }
 }
 
+static float current_cam_speed = CAM_SPEED;
+static bool mouse_currently_activated = false;
+static bool mouse_mode_was_just_changed = false;
+
 void Game::processInput(double delta) {
    if(renderer.key_pressed(GLFW_KEY_ESCAPE)) {
-      renderer.closeWindow(); 
+      if(!mouse_mode_was_just_changed) {
+
+         mouse_mode_was_just_changed = true;
+         mouse_currently_activated = !mouse_currently_activated;
+         renderer.activate_mouse(mouse_currently_activated);
+      }
+   } else {
+      mouse_mode_was_just_changed = false;
+   }
+   if(renderer.key_pressed(GLFW_KEY_TAB)) {
+      renderer.closeWindow();
    }
    float deltaf = (float)delta;
    if(renderer.key_pressed(GLFW_KEY_W)) {
-      camera_position += camera_front * CAM_SPEED * deltaf;
+      camera_position += camera_front * current_cam_speed * deltaf;
    }
    if(renderer.key_pressed(GLFW_KEY_S)) {
-      camera_position -= camera_front * CAM_SPEED * deltaf;
+      camera_position -= camera_front * current_cam_speed * deltaf;
    }
    if(renderer.key_pressed(GLFW_KEY_A)) {
-      camera_position -= glm::normalize(glm::cross(camera_front, camera_up)) * CAM_SPEED * deltaf;
+      camera_position -= glm::normalize(glm::cross(camera_front, camera_up)) * current_cam_speed * deltaf;
    }
    if(renderer.key_pressed(GLFW_KEY_D)) {
-      camera_position += glm::normalize(glm::cross(camera_front, camera_up)) * CAM_SPEED * deltaf;
+      camera_position += glm::normalize(glm::cross(camera_front, camera_up)) * current_cam_speed * deltaf;
    }
    if(renderer.key_pressed(GLFW_KEY_SPACE)) {
-      camera_position += camera_up * CAM_SPEED * deltaf;
+      camera_position += camera_up * current_cam_speed * deltaf;
    }
    if(renderer.key_pressed(GLFW_KEY_LEFT_SHIFT)) {
-      camera_position -= camera_up * CAM_SPEED * deltaf;
+      camera_position -= camera_up * current_cam_speed * deltaf;
+   }
+   if(renderer.key_pressed(GLFW_KEY_LEFT_CONTROL)) {
+      current_cam_speed = CAM_SPEED*10;
+   } else {
+      current_cam_speed = CAM_SPEED;
    }
 }
 

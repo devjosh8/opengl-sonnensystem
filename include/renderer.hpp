@@ -14,6 +14,7 @@ class Renderer {
       bool windowShouldClose();
       bool key_pressed(int key);
       void set_mouse_callback(GLFWcursorposfun func);
+      void activate_mouse(bool activate);
 
       void closeWindow();
       virtual ~Renderer();

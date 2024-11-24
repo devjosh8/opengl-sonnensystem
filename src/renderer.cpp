@@ -26,14 +26,21 @@ int Renderer::init() {
    }
    
    glfwMakeContextCurrent(window);
-
-   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+   
+   activate_mouse(false);
 
    return 1;
 }
 
 Planet sun;
+Planet mercury;
+Planet venus;
 Planet earth;
+Planet mars;
+Planet jupiter;
+Planet saturn;
+Planet uranus;
+Planet neptune;
 
 void Renderer::post_init() {
    glViewport(0, 0, GAME_WIDTH, GAME_HEIGHT);
@@ -49,9 +56,23 @@ void Renderer::post_init() {
    defaultShader.init("res/vertexshader.txt", "res/fragmentshader.txt");
    outlineShader.init("res/outlinevertex.txt", "res/outlinefragment.txt"); 
    sunShader.init("res/sunvertexshader.txt", "res/sunfragmentshader.txt");
-   // Planet; Color, Radius, Rotation-Speed, Bahn-Radius, Eigen-Rotation 
-   sun.init(glm::vec3(1.0f, 1.0f, 0.0f), 2.0f, 0.0f, 0.0f, 50.0f);
-   earth.init(glm::vec3(0.0f, 1.0f, 0.0f), 0.5f, 5.0f, 5.0f, 120.0f);
+
+
+   float rot_speed_scale = 1.0f;
+   float sun_distance = 0.0f;
+
+   // Planet; Color,                         Radius,        Rotation-Speed,   Bahn-Radius, Eigen-Rotation 
+   sun.    init(glm::vec3(1.0f, 1.0f, 0.0f),    2.5f,   0.000f * rot_speed_scale,  0.0f + sun_distance,      4.0f);
+   mercury.init(glm::vec3(0.64f, 0.66f, 0.64f), 0.19f,   4.140f * rot_speed_scale, 5.8f + sun_distance,      120.0f);
+   venus.  init(glm::vec3(1.0f, 1.0f, 0.94f),   0.475f,  1.620f * rot_speed_scale, 10.8f + sun_distance,     120.0f);
+   earth.  init(glm::vec3(0.09f, 0.57f, 0.61f), 0.5f,    1.000f * rot_speed_scale, 15.0f + sun_distance,     100.0f);
+   mars.   init(glm::vec3(0.69f, 0.36f, 0.12f), 0.26f,   0.530f * rot_speed_scale, 22.8f + sun_distance,     100.0f);
+   jupiter.init(glm::vec3(0.5f, 0.35f, 0.14f),  5.5f,    0.083f * rot_speed_scale, 77.9f + sun_distance,     100.0f);
+   saturn .init(glm::vec3(0.58f, 0.56f, 0.0f),  4.58f,   0.034f * rot_speed_scale, 143.0f + sun_distance,    100.0f);
+   uranus .init(glm::vec3(0.83f, 0.98f, 1.0f),  1.82f,   0.012f * rot_speed_scale, 280.0f + sun_distance,    100.0f);
+   neptune.init(glm::vec3(0.38f, 0.62f, 0.91f), 1.78f,   0.006f * rot_speed_scale, 451.5f + sun_distance,    100.0f);
+
+   // Rotationsspeed: 5.0f = 365 Tage
 }
 
 void Renderer::render(glm::mat4 view) {
@@ -68,6 +89,13 @@ void Renderer::render(glm::mat4 view) {
    defaultShader.use();
    update_matrices(view, &defaultShader);
    earth.render(&defaultShader);
+   mercury.render(&defaultShader);
+   venus.render(&defaultShader);
+   mars.render(&defaultShader);
+   jupiter.render(&defaultShader);
+   saturn.render(&defaultShader);
+   uranus.render(&defaultShader);
+   neptune.render(&defaultShader);
 
    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
    glStencilMask(0x00);
@@ -76,7 +104,14 @@ void Renderer::render(glm::mat4 view) {
    outlineShader.use(); 
    update_matrices(view, &outlineShader); 
    sun.render_scale(&outlineShader, 1.02f);
-   earth.render_scale(&outlineShader, 1.05f);
+   earth.render_scale(&outlineShader, 1.06f);
+   mercury.render_scale(&outlineShader, 1.08f);
+   venus.render_scale(&outlineShader, 1.05f);
+   mars.render_scale(&outlineShader, 1.08f);
+   jupiter.render_scale(&outlineShader, 1.02f);
+   saturn.render_scale(&outlineShader, 1.025f);
+   uranus.render_scale(&outlineShader, 1.03f);
+   neptune.render_scale(&outlineShader, 1.03f);
    
 
    glStencilMask(0xFF);
@@ -90,7 +125,7 @@ void Renderer::render(glm::mat4 view) {
 void Renderer::update_matrices(glm::mat4 view, ShaderProgram* program_to_update) {
    glm::mat4 projection = glm::mat4(1.0f);
 
-   projection = glm::perspective(glm::radians(CAM_FOV), (float)game_width / (float)game_height, 0.1f, 100.0f);
+   projection = glm::perspective(glm::radians(CAM_FOV), (float)game_width / (float)game_height, 0.1f, 1000.0f);
    
    glUniform3f(program_to_update->getLocation("light_pos"), 0.0f, 0.0f, 0.0f);
    unsigned int viewLoc = program_to_update->getLocation("view");
@@ -115,6 +150,10 @@ bool Renderer::windowShouldClose() {
    return glfwWindowShouldClose(window);
 }
 
+void Renderer::activate_mouse(bool activate) {
+   glfwSetInputMode(window, GLFW_CURSOR, activate ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+}
+
 bool Renderer::key_pressed(int key) {
    return glfwGetKey(window, key);
 }
@@ -126,3 +165,4 @@ void Renderer::set_mouse_callback(GLFWcursorposfun func) {
 Renderer::~Renderer() {
    glfwDestroyWindow(window);
 }
+
