@@ -22,6 +22,7 @@ class Renderer {
       GLFWwindow* window;
       ShaderProgram defaultShader;
       ShaderProgram outlineShader;
+      ShaderProgram sunShader;
 
-      void update_matrices(glm::mat4 view, ShaderProgram shader_to_update);
+      void update_matrices(glm::mat4 view, ShaderProgram* shader_to_update);
 };
